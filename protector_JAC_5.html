@@ -1,0 +1,494 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0"/>
+  <meta name="theme-color" content="#0b0b10"/>
+  <meta name="apple-mobile-web-app-capable" content="yes"/>
+  <meta name="mobile-web-app-capable" content="yes"/>
+  <title>Fotografía · Jairo Alfonso Covaleda</title>
+  <style>
+    *{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+    body{
+      min-height:100vh;
+      background:linear-gradient(160deg,#0b0b10 0%,#131320 55%,#0e1a2e 100%);
+      font-family:Georgia,serif;color:#e0d8c8;
+      display:flex;flex-direction:column;align-items:center;
+      padding:36px 16px 80px;
+    }
+    header{text-align:center;margin-bottom:28px}
+    .eyebrow{font-size:13px;letter-spacing:4px;color:#c8a84b;font-style:italic;margin-bottom:6px}
+    h1{font-size:24px;font-weight:700;color:#fff;letter-spacing:.5px}
+    .divider{width:50px;height:1px;background:#c8a84b;margin:10px auto}
+    .sub{font-size:11px;color:#555;letter-spacing:3px}
+
+    .badges{display:flex;flex-wrap:wrap;gap:8px;justify-content:center;margin-bottom:26px}
+    .badge{
+      background:rgba(200,168,75,.09);border:1px solid rgba(200,168,75,.22);
+      border-radius:20px;padding:5px 13px;font-size:11px;color:#c8a84b;letter-spacing:.5px
+    }
+
+    .dropzone{
+      display:block;
+      width:100%;max-width:520px;
+      border:2px dashed rgba(200,168,75,.3);border-radius:14px;
+      padding:36px 20px;text-align:center;cursor:pointer;
+      background:rgba(255,255,255,.015);transition:all .2s;margin-bottom:18px;
+      -webkit-user-select:none;user-select:none;
+    }
+    .dropzone.drag{border-color:#c8a84b;background:rgba(200,168,75,.05)}
+    .dropzone .icon{font-size:38px;margin-bottom:10px}
+    .dropzone p{font-size:14px;color:#999}
+    .dropzone p span{color:#c8a84b;text-decoration:underline}
+    .dropzone small{font-size:11px;color:#444;margin-top:4px;display:block}
+
+    .file-list{width:100%;max-width:520px;margin-bottom:18px}
+    .file-count{font-size:11px;color:#555;letter-spacing:2px;margin-bottom:8px}
+    .file-item{
+      display:flex;align-items:center;justify-content:space-between;
+      background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.06);
+      border-radius:8px;padding:9px 12px;margin-bottom:6px;
+    }
+    .file-info{display:flex;align-items:center;gap:10px}
+    .file-name{font-size:13px;color:#ccc}
+    .file-size{font-size:11px;color:#555}
+    .btn-remove{background:none;border:none;color:#444;cursor:pointer;font-size:16px;padding:4px 6px}
+
+    .btn-main{
+      width:100%;max-width:520px;
+      background:linear-gradient(135deg,#c8a84b,#9a6f28);
+      border:none;border-radius:10px;padding:14px;
+      color:#fff;font-size:15px;font-weight:700;letter-spacing:1px;
+      cursor:pointer;box-shadow:0 4px 18px rgba(200,168,75,.28);
+      transition:all .2s;margin-bottom:12px;font-family:Georgia,serif;
+    }
+    .btn-main:disabled{background:rgba(200,168,75,.25);box-shadow:none;cursor:not-allowed}
+
+    .progress-wrap{width:100%;max-width:520px;height:4px;background:rgba(255,255,255,.07);border-radius:2px;margin-bottom:18px}
+    .progress-bar{height:100%;background:linear-gradient(90deg,#c8a84b,#e8c870);border-radius:2px;transition:width .3s}
+
+    .results{width:100%;max-width:520px}
+    .result-header{text-align:center;margin-bottom:20px}
+    .result-icon{font-size:38px;margin-bottom:8px}
+    .result-msg{color:#c8a84b;font-size:15px}
+    .result-item{
+      display:flex;align-items:center;justify-content:space-between;
+      border-radius:8px;padding:9px 12px;margin-bottom:7px;
+    }
+    .result-item.ok{background:rgba(200,168,75,.06);border:1px solid rgba(200,168,75,.2)}
+    .result-item.fail{background:rgba(220,60,60,.07);border:1px solid rgba(220,60,60,.2)}
+    .result-name.ok{font-size:13px;color:#c8a84b}
+    .result-name.fail{font-size:13px;color:#f66}
+    .result-err{font-size:11px;color:#844;margin-top:2px}
+    .btn-dl{
+      background:rgba(200,168,75,.14);border:1px solid rgba(200,168,75,.3);
+      border-radius:6px;padding:5px 13px;color:#c8a84b;font-size:12px;
+      cursor:pointer;white-space:nowrap;font-family:Georgia,serif;
+    }
+    .btn-all{
+      width:100%;background:linear-gradient(135deg,#c8a84b,#9a6f28);
+      border:none;border-radius:10px;padding:13px;color:#fff;
+      font-size:14px;font-weight:700;cursor:pointer;
+      box-shadow:0 4px 18px rgba(200,168,75,.28);
+      margin-bottom:10px;font-family:Georgia,serif;
+    }
+    .btn-reset{
+      width:100%;background:transparent;border:1px solid rgba(255,255,255,.1);
+      border-radius:10px;padding:12px;color:#555;font-size:13px;
+      cursor:pointer;font-family:Georgia,serif;
+    }
+    footer{margin-top:44px;font-size:10px;color:#2a2a2a;letter-spacing:1px;text-align:center}
+
+    /* Sugerencias IA */
+    #sugerencias{width:100%;max-width:520px;margin-top:24px;display:none}
+    .sug-header{display:flex;align-items:center;gap:10px;margin-bottom:14px}
+    .sug-header h2{font-size:14px;color:#c8a84b;letter-spacing:2px;font-weight:400;margin:0}
+    .sug-divider{flex:1;height:1px;background:rgba(200,168,75,.2)}
+    .sug-img-name{font-size:11px;color:#555;margin-bottom:12px;font-style:italic}
+    .sug-loading{text-align:center;padding:24px;color:#555;font-size:13px;font-style:italic}
+    .sug-loading .dots::after{content:'...';animation:dots 1.2s steps(3,end) infinite}
+    @keyframes dots{0%,100%{content:'.'}33%{content:'..'}66%{content:'...'}}
+    .sug-box{background:rgba(255,255,255,.03);border:1px solid rgba(200,168,75,.15);border-radius:10px;padding:18px 20px}
+    .sug-score{display:flex;align-items:center;gap:12px;margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid rgba(255,255,255,.06)}
+    .sug-score-num{font-size:36px;font-weight:700;color:#c8a84b}
+    .sug-score-label{font-size:12px;color:#666;letter-spacing:1px}
+    .sug-stars{font-size:18px;margin-top:2px}
+    .sug-section{margin-bottom:14px}
+    .sug-section-title{font-size:11px;letter-spacing:2px;color:#c8a84b;margin-bottom:6px;font-weight:600}
+    .sug-text{font-size:13px;color:#bbb;line-height:1.7}
+    .sug-tag{display:inline-block;background:rgba(200,168,75,.1);border:1px solid rgba(200,168,75,.2);border-radius:12px;padding:3px 10px;font-size:11px;color:#c8a84b;margin:3px 3px 3px 0}
+    .sug-error{color:#f66;font-size:13px;text-align:center;padding:16px}
+    .btn-analyze{
+      width:100%;max-width:520px;margin-top:10px;
+      background:rgba(200,168,75,.1);border:1px solid rgba(200,168,75,.3);
+      border-radius:10px;padding:11px;color:#c8a84b;
+      font-size:13px;cursor:pointer;font-family:Georgia,serif;
+      letter-spacing:1px;transition:all .2s;display:none;
+    }
+    .btn-analyze:hover{background:rgba(200,168,75,.18)}
+
+    /* install banner */
+    #install-banner{
+      display:none;position:fixed;bottom:0;left:0;right:0;
+      background:#131320;border-top:1px solid rgba(200,168,75,.25);
+      padding:14px 20px;display:flex;align-items:center;justify-content:space-between;
+      z-index:999;
+    }
+    #install-banner p{font-size:13px;color:#c8a84b}
+    #install-banner button{
+      background:linear-gradient(135deg,#c8a84b,#9a6f28);
+      border:none;border-radius:8px;padding:8px 18px;
+      color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:Georgia,serif;
+    }
+    #install-banner .close-banner{background:none;border:none;color:#555;font-size:20px;cursor:pointer;margin-left:12px}
+  </style>
+</head>
+<body>
+
+<header>
+  <p class="eyebrow">Fotografía</p>
+  <h1>Jairo Alfonso Covaleda</h1>
+  <div class="divider"></div>
+  <p class="sub">PROTECTOR DE IMÁGENES</p>
+</header>
+
+<div class="badges">
+  <span class="badge">👁 Marca sutil</span>
+  <span class="badge">🔍 Visible al zoom</span>
+  <span class="badge">🔒 Esteganografía</span>
+  <span class="badge">📋 Metadatos</span>
+</div>
+
+<label class="dropzone" id="dropzone" for="fileInput">
+  <div class="icon">📷</div>
+  <p>Toca aquí para <span>seleccionar fotos</span></p>
+  <small>JPG · PNG · WEBP · cualquier imagen</small>
+</label>
+<input type="file" id="fileInput" multiple accept="image/*" style="position:absolute;left:-9999px;opacity:0"/>
+
+<div class="file-list" id="fileList" style="display:none">
+  <p class="file-count" id="fileCount"></p>
+  <div id="fileItems"></div>
+</div>
+
+<button class="btn-main" id="btnProcess" style="display:none">🔐 Proteger fotos</button>
+<div class="progress-wrap" id="progressWrap" style="display:none">
+  <div class="progress-bar" id="progressBar" style="width:0%"></div>
+</div>
+
+<div class="results" id="results" style="display:none"></div>
+
+<div id="sugerencias" style="display:none;width:100%;max-width:520px;margin-top:16px">
+  <div style="background:rgba(200,168,75,.07);border:1px solid rgba(200,168,75,.25);border-radius:12px;padding:20px;text-align:center">
+    <div style="font-size:28px;margin-bottom:10px">✨</div>
+    <div style="font-size:13px;color:#c8a84b;letter-spacing:2px;margin-bottom:8px">ANÁLISIS FOTOGRÁFICO CON IA</div>
+    <div style="font-size:13px;color:#888;line-height:1.7;margin-bottom:14px">
+      Para obtener un análisis profesional de tu foto<br>
+      (puntuación, fortalezas, consejos y potencial comercial)<br>
+      envíala directamente a Claude en el chat.
+    </div>
+    <div style="display:flex;align-items:center;gap:0;background:rgba(0,0,0,.3);border-radius:8px;overflow:hidden;margin-bottom:4px">
+      <div style="flex:1;padding:10px 14px;font-size:12px;color:#555;text-align:left;font-style:italic">claude.ai/new</div>
+      <button onclick="copyLink()" style="background:rgba(200,168,75,.2);border:none;border-left:1px solid rgba(200,168,75,.2);padding:10px 16px;color:#c8a84b;font-size:12px;cursor:pointer;font-family:Georgia,serif">
+        Copiar
+      </button>
+    </div>
+    <div style="font-size:11px;color:#444;margin-top:8px">Adjunta la foto original y escribe: <em style="color:#666">"analiza esta foto"</em></div>
+  </div>
+</div>
+
+<footer>Todo se procesa en tu dispositivo · Ninguna imagen se sube a servidores</footer>
+
+<!-- Install banner -->
+<div id="install-banner" style="display:none">
+  <p>📲 Instalar como app</p>
+  <button id="btnInstall">Instalar</button>
+  <button class="close-banner" id="btnCloseBanner">✕</button>
+</div>
+
+<script>
+const AUTHOR = "Jairo Alfonso Covaleda";
+const LABEL  = "Fotografía";
+const STEG   = `JAC|Fotografia|2026|${AUTHOR}|Todos los derechos reservados`;
+
+let files = [];
+let deferredPrompt = null;
+
+// ── PWA install prompt ───────────────────────────────────────────────
+window.addEventListener('beforeinstallprompt', (e) => {
+  e.preventDefault();
+  deferredPrompt = e;
+  document.getElementById('install-banner').style.display = 'flex';
+});
+document.getElementById('btnInstall').onclick = async () => {
+  if (!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const { outcome } = await deferredPrompt.userChoice;
+  deferredPrompt = null;
+  document.getElementById('install-banner').style.display = 'none';
+};
+document.getElementById('btnCloseBanner').onclick = () => {
+  document.getElementById('install-banner').style.display = 'none';
+};
+
+// ── Esteganografía LSB canal azul, triple redundancia ────────────────
+function embedSteg(imageData) {
+  try {
+    const data = new Uint8ClampedArray(imageData.data);
+    const bytes = new TextEncoder().encode(STEG);
+    let bits = '';
+    for (const b of bytes) bits += b.toString(2).padStart(8,'0');
+    const bits3 = bits + bits + bits;
+    for (let i = 0; i < bits3.length; i++) {
+      const idx = i * 4 + 2;
+      if (idx >= data.length) break;
+      data[idx] = (data[idx] & 0xfd) | (parseInt(bits3[i]) << 1);
+    }
+    return new ImageData(data, imageData.width, imageData.height);
+  } catch(e) { return imageData; }
+}
+
+// ── Marca de agua discreta ────────────────────────────────────────────
+function drawMark(canvas, ctx) {
+  const W = canvas.width, H = canvas.height;
+  const ref = Math.min(W, H);
+
+  ctx.save();
+
+  // ── 1. Marca central: MUY pequeña, solo visible al hacer zoom ─────────
+  // Tamaño fijo pequeño independiente de la resolución
+  const sS = Math.max(6, Math.round(ref * 0.007));   // "Fotografía" — muy pequeño
+  const sL = Math.max(8, Math.round(ref * 0.009));   // nombre — apenas más grande
+
+  ctx.font = '300 italic ' + sS + 'px Georgia,serif';
+  const wL = ctx.measureText(LABEL).width;
+  ctx.font = '600 ' + sL + 'px Georgia,serif';
+  const wA = ctx.measureText(AUTHOR).width;
+
+  const bW = Math.max(wL, wA) + sS * 2;
+  const lH = sL * 1.4;
+  const bH = lH * 2;
+  const cx = W * 0.5;
+  const cy = H * 0.5;
+  const x0 = cx - bW / 2;
+  const y0 = cy - bH / 2;
+
+  // Fondo muy sutil
+  ctx.globalAlpha = 0.30;
+  ctx.fillStyle = 'rgba(0,0,0,0.20)';
+  ctx.fillRect(x0, y0, bW, bH);
+
+  // Línea dorada delgada
+  ctx.strokeStyle = 'rgba(210,175,70,0.6)';
+  ctx.lineWidth = 1;
+  ctx.beginPath();
+  ctx.moveTo(x0 + sS * 0.5, cy);
+  ctx.lineTo(x0 + bW - sS * 0.5, cy);
+  ctx.stroke();
+
+  ctx.textAlign = 'center';
+  ctx.textBaseline = 'middle';
+
+  // "Fotografía"
+  ctx.globalAlpha = 0.35;
+  ctx.fillStyle = 'rgba(220,195,120,1)';
+  ctx.font = '300 italic ' + sS + 'px Georgia,serif';
+  ctx.fillText(LABEL, cx, cy - lH * 0.5);
+
+  // Nombre
+  ctx.globalAlpha = 0.38;
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.font = '600 ' + sL + 'px Georgia,serif';
+  ctx.fillText(AUTHOR, cx, cy + lH * 0.5);
+
+  // ── 2. Firma inferior: CLARAMENTE más grande y visible ────────────────
+  // El doble de tamaño que la marca central
+  const sC = Math.max(20, Math.round(ref * 0.020));
+  ctx.font = '300 italic ' + sC + 'px Georgia,serif';
+  const firmaTxt = LABEL + '  ·  ' + AUTHOR;
+  const firmaW = ctx.measureText(firmaTxt).width;
+  const firmaX = (W - firmaW) / 2;
+  const firmaY = H - ref * 0.030;
+
+  // Fondo semitransparente centrado
+  ctx.globalAlpha = 0.60;
+  ctx.fillStyle = 'rgba(0,0,0,0.45)';
+  ctx.fillRect(firmaX - sC * 0.8, firmaY - sC * 1.2, firmaW + sC * 1.6, sC * 1.6);
+
+  // Texto firma
+  ctx.globalAlpha = 0.88;
+  ctx.shadowColor = 'rgba(0,0,0,0.9)';
+  ctx.shadowBlur = 4;
+  ctx.fillStyle = 'rgba(255,255,255,1)';
+  ctx.textAlign = 'left';
+  ctx.textBaseline = 'bottom';
+  ctx.fillText(firmaTxt, firmaX, firmaY);
+  ctx.shadowBlur = 0;
+
+  ctx.restore();
+}
+
+// ── Procesar imagen ────────────────────────────────────────────────────
+function processImage(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const img = new Image();
+      img.onload = () => {
+        try {
+          const canvas = document.createElement('canvas');
+          canvas.width  = img.naturalWidth;
+          canvas.height = img.naturalHeight;
+          const ctx = canvas.getContext('2d', { willReadFrequently: true });
+          ctx.drawImage(img, 0, 0);
+          drawMark(canvas, ctx);
+          const id = ctx.getImageData(0, 0, canvas.width, canvas.height);
+          ctx.putImageData(embedSteg(id), 0, 0);
+          canvas.toBlob(blob => {
+            if (!blob) { reject(new Error('No se pudo generar el archivo')); return; }
+            resolve({ blob, name: file.name.replace(/\.[^.]+$/, '_JAC_protegida.png'), ok: true });
+          }, 'image/png');
+        } catch(err) { reject(err); }
+      };
+      img.onerror = () => reject(new Error('Imagen no válida'));
+      img.src = e.target.result;
+    };
+    reader.onerror = () => reject(new Error('Error al leer el archivo'));
+    reader.readAsDataURL(file);
+  });
+}
+
+// ── UI helpers ──────────────────────────────────────────────────────────
+function renderFileList() {
+  const list = document.getElementById('fileList');
+  const items = document.getElementById('fileItems');
+  const count = document.getElementById('fileCount');
+  const btn   = document.getElementById('btnProcess');
+  if (!files.length) { list.style.display = 'none'; btn.style.display = 'none'; return; }
+  list.style.display = 'block';
+  btn.style.display  = 'block';
+  count.textContent  = `${files.length} FOTO${files.length > 1 ? 'S' : ''}`;
+  btn.textContent    = `🔐 Proteger ${files.length} foto${files.length > 1 ? 's' : ''}`;
+  items.innerHTML = files.map((f, i) => `
+    <div class="file-item">
+      <div class="file-info">
+        <span style="font-size:16px">🖼</span>
+        <div>
+          <div class="file-name">${f.name}</div>
+          <div class="file-size">${(f.size/1024/1024).toFixed(2)} MB</div>
+        </div>
+      </div>
+      <button class="btn-remove" onclick="removeFile(${i})">✕</button>
+    </div>`).join('');
+}
+
+window.removeFile = (i) => { files.splice(i,1); renderFileList(); };
+
+function addFiles(newFiles) {
+  const imgs = Array.from(newFiles).filter(f => f.type.startsWith('image/'));
+  const existing = new Set(files.map(f => f.name + f.size));
+  imgs.forEach(f => { if (!existing.has(f.name + f.size)) files.push(f); });
+  renderFileList();
+}
+
+// Drop zone — el label maneja el tap/click nativamente en móvil
+const dz = document.getElementById('dropzone');
+dz.addEventListener('dragover',  e => { e.preventDefault(); dz.classList.add('drag'); });
+dz.addEventListener('dragleave', () => dz.classList.remove('drag'));
+dz.addEventListener('drop', e => {
+  e.preventDefault(); dz.classList.remove('drag');
+  addFiles(e.dataTransfer.files);
+});
+document.getElementById('fileInput').addEventListener('change', e => addFiles(e.target.files));
+
+// Procesar
+document.getElementById('btnProcess').addEventListener('click', async () => {
+  if (!files.length) return;
+  const btn = document.getElementById('btnProcess');
+  const pw  = document.getElementById('progressWrap');
+  const pb  = document.getElementById('progressBar');
+  const res = document.getElementById('results');
+
+  btn.disabled = true;
+  pw.style.display = 'block';
+  res.style.display = 'none';
+  document.getElementById('fileList').style.display = 'none';
+  dz.style.display = 'none';
+
+  const out = [];
+  for (let i = 0; i < files.length; i++) {
+    btn.textContent = `⏳ Procesando ${i+1} de ${files.length}…`;
+    pb.style.width  = `${Math.round(((i)/files.length)*100)}%`;
+    try {
+      const r = await processImage(files[i]);
+      out.push(r);
+    } catch(e) {
+      out.push({ name: files[i].name, ok: false, error: e.message });
+    }
+  }
+  pb.style.width = '100%';
+
+  const ok = out.filter(r => r.ok);
+
+  res.style.display = 'block';
+  res.innerHTML = `
+    <div class="result-header">
+      <div class="result-icon">${ok.length > 0 ? '✅' : '❌'}</div>
+      <p class="result-msg">${ok.length} foto${ok.length!==1?'s':''} protegida${ok.length!==1?'s':''} correctamente</p>
+    </div>
+    ${out.map((r,i) => `
+      <div class="result-item ${r.ok?'ok':'fail'}">
+        <div>
+          <div class="result-name ${r.ok?'ok':'fail'}">${r.ok?'✓':'✗'} ${r.name}</div>
+          ${!r.ok && r.error ? `<div class="result-err">${r.error}</div>` : ''}
+        </div>
+        ${r.ok ? `<button class="btn-dl" onclick="dlOne(${i})">↓ Descargar</button>` : ''}
+      </div>`).join('')}
+    ${ok.length > 1 ? `<button class="btn-all" onclick="dlAll()">↓ Descargar todas (${ok.length})</button>` : ''}
+    <button class="btn-reset" onclick="resetApp()">Procesar más fotos</button>
+  `;
+
+  pw.style.display = 'none';
+  btn.disabled = false;
+  window._results = out;
+
+  // Auto-descarga si es una sola foto
+  if (ok.length === 1) setTimeout(() => dlOne(out.indexOf(ok[0])), 600);
+
+  // Mostrar panel de análisis
+  document.getElementById('sugerencias').style.display = 'block';
+});
+
+window.dlOne = (i) => {
+  const r = window._results[i];
+  if (!r || !r.ok) return;
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(r.blob);
+  a.download = r.name;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 5000);
+};
+
+window.dlAll = () => {
+  (window._results || []).filter(r => r.ok).forEach((r,i) => {
+    setTimeout(() => window.dlOne(window._results.indexOf(r)), i * 400);
+  });
+};
+
+window.copyLink = () => {
+  navigator.clipboard.writeText('https://claude.ai/new').catch(() => {});
+};
+
+window.resetApp = () => {
+  files = [];
+  window._results = [];
+  document.getElementById('results').style.display  = 'none';
+  document.getElementById('fileList').style.display = 'none';
+  document.getElementById('btnProcess').style.display = 'none';
+  document.getElementById('dropzone').style.display = 'block';
+  document.getElementById('fileInput').value = '';
+  document.getElementById('sugerencias').style.display = 'none';
+};
+</script>
+</body>
+</html>
